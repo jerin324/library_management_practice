@@ -60,14 +60,25 @@ def logout_view(request):
 
     return redirect('login')
 
+
 @login_required
 def home_view(request):
 
+    total_books = Book.objects.count()
+    total_borrowed = BorrowRecord.objects.filter(
+        is_returned=False
+    ).count()
+
+    context = {
+        'total_books': total_books,
+        'total_borrowed': total_borrowed,
+    }
+
     return render(
         request,
-        'library/home.html'
+        'library/home.html',
+        context
     )
-    
 @login_required
 def book_list(request):
 
@@ -160,3 +171,60 @@ def delete_book(request, pk):
         'library/delete_book.html',
         {'book': book}
     )
+      
+    
+@login_required
+def borrow_book(request, pk):
+
+    if request.user.role != 'student':
+        return redirect('book-list')
+
+    book = get_object_or_404(Book, pk=pk)
+
+    already_borrowed = BorrowRecord.objects.filter(
+        user=request.user,
+        book=book,
+        is_returned=False
+    ).exists()
+
+    if not already_borrowed:
+
+        BorrowRecord.objects.create(
+            user=request.user,
+            book=book
+        )
+
+    return redirect('my-books')
+
+
+@login_required
+def my_books(request):
+
+    borrowed_books = BorrowRecord.objects.filter(
+        user=request.user,
+        is_returned=False
+    )
+
+    context = {
+        'borrowed_books': borrowed_books
+    }
+
+    return render(
+        request,
+        'library/my_books.html',
+        context
+    )
+    
+@login_required
+def return_book(request, pk):
+
+    record = get_object_or_404(
+        BorrowRecord,
+        pk=pk,
+        user=request.user
+    )
+
+    record.is_returned = True
+    record.save()
+
+    return redirect('my-books')

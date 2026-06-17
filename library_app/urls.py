@@ -1,54 +1,22 @@
 from django.urls import path
-
-from .views import *
+from . import views
 
 urlpatterns = [
+    path('', views.home_view, name='home'),
 
-    path(
-        '',
-        home_view,
-        name='home'
-    ),
+    # Authentication
+    path('register/', views.register_view, name='register'),
+    path('', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
 
-    path(
-        'register/',
-        register_view,
-        name='register'
-    ),
+    # Books
+    path('books/', views.book_list, name='book-list'),
+    path('books/add/', views.add_book, name='add-book'),
+    path('books/edit/<int:pk>/', views.edit_book, name='edit-book'),
+    path('books/delete/<int:pk>/', views.delete_book, name='delete-book'),
 
-    path(
-        'login/',
-        login_view,
-        name='login'
-    ),
-
-    path(
-        'logout/',
-        logout_view,
-        name='logout'
-    ),
-    
-    path(
-    'books/',
-    book_list,
-    name='book-list'
-    ),
-
-    path(
-        'books/add/',
-        add_book,
-        name='add-book'
-    ),
-
-    path(
-        'books/<int:pk>/edit/',
-        edit_book,
-        name='edit-book'
-    ),
-
-    path(
-        'books/<int:pk>/delete/',
-        delete_book,
-        name='delete-book'
-    ),
+    # Borrow & Return
+    path('books/borrow/<int:pk>/', views.borrow_book, name='borrow-book'),
+    path('my-books/', views.my_books, name='my-books'),
+    path('books/return/<int:pk>/', views.return_book, name='return-book'),
 ]
