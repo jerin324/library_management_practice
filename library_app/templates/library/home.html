@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h2>Welcome to the Library</h2>
+        <p>You are logged in!</p>
+        <a href="{% url 'logout' %}" class="btn">Logout</a>
+    </div>
+</body>
+</html>
