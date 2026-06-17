@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-
+from django.shortcuts import get_object_or_404
 from .forms import *
 from .models import *
 
@@ -112,3 +112,51 @@ def add_book(request):
         {'form': form}
     )
   
+@login_required
+def edit_book(request, pk):
+
+    if request.user.role != 'librarian':
+        return redirect('book-list')
+
+    book = get_object_or_404(Book, pk=pk)
+
+    if request.method == 'POST':
+
+        form = BookForm(
+            request.POST,
+            instance=book
+        )
+
+        if form.is_valid():
+            form.save()
+
+            return redirect('book-list')
+
+    else:
+        form = BookForm(instance=book)
+
+    return render(
+        request,
+        'library/edit_book.html',
+        {'form': form}
+    )
+    
+@login_required
+def delete_book(request, pk):
+
+    if request.user.role != 'librarian':
+        return redirect('book-list')
+
+    book = get_object_or_404(Book, pk=pk)
+
+    if request.method == 'POST':
+
+        book.delete()
+
+        return redirect('book-list')
+
+    return render(
+        request,
+        'library/delete_book.html',
+        {'book': book}
+    )

@@ -32,11 +32,23 @@ urlpatterns = [
     'books/',
     book_list,
     name='book-list'
-),
+    ),
 
-path(
-    'books/add/',
-    add_book,
-    name='add-book'
-),
+    path(
+        'books/add/',
+        add_book,
+        name='add-book'
+    ),
+
+    path(
+        'books/<int:pk>/edit/',
+        edit_book,
+        name='edit-book'
+    ),
+
+    path(
+        'books/<int:pk>/delete/',
+        delete_book,
+        name='delete-book'
+    ),
 ]
