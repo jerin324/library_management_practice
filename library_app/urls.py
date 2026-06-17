@@ -1,11 +1,6 @@
 from django.urls import path
 
-from .views import (
-    register_view,
-    login_view,
-    logout_view,
-    home_view
-)
+from .views import *
 
 urlpatterns = [
 
@@ -32,4 +27,16 @@ urlpatterns = [
         logout_view,
         name='logout'
     ),
+    
+    path(
+    'books/',
+    book_list,
+    name='book-list'
+),
+
+path(
+    'books/add/',
+    add_book,
+    name='add-book'
+),
 ]

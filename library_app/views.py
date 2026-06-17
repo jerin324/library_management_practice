@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 
-from .forms import RegisterForm, LoginForm
+from .forms import *
+from .models import *
 
 def register_view(request):
 
@@ -66,3 +67,48 @@ def home_view(request):
         request,
         'library/home.html'
     )
+    
+@login_required
+def book_list(request):
+
+    books = Book.objects.all()
+
+    context = {
+        'books': books
+    }
+
+    return render(
+        request,
+        'library/book_list.html',
+        context
+    )
+    
+@login_required
+def add_book(request):
+
+    if request.user.role != 'librarian':
+        return redirect('book-list')
+
+    if request.method == 'POST':
+
+        form = BookForm(request.POST)
+
+        if form.is_valid():
+
+            book = form.save(commit=False)
+
+            book.added_by = request.user
+
+            book.save()
+
+            return redirect('book-list')
+
+    else:
+        form = BookForm()
+
+    return render(
+        request,
+        'library/add_book.html',
+        {'form': form}
+    )
+  
