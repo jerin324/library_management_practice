@@ -1,0 +1,51 @@
+{% extends 'base/base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="fw-bold m-0">My Account Profile</h3>
+            <a href="{% url 'dashboard' %}" class="btn btn-sm btn-outline-secondary rounded-pill">← Back Dashboard</a>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-6">
+                <div class="card p-3 border-0 bg-white shadow-sm text-center">
+                    <small class="text-muted uppercase fw-bold d-block">Active Outward Loans</small>
+                    <h2 class="fw-bold text-primary m-0 mt-1">{{ currently_holding }}</h2>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="card p-3 border-0 bg-white shadow-sm text-center">
+                    <small class="text-muted uppercase fw-bold d-block">All-Time Transactions</small>
+                    <h2 class="fw-bold text-success m-0 mt-1">{{ total_borrowed }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <div class="card p-4">
+            <h5 class="mb-4 border-bottom pb-2 text-secondary fw-semibold">Personal Academic Account</h5>
+            <form method="POST" class="action-form">
+                {% csrf_token %}
+                <div class="row mb-3">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <label class="form-label text-muted small fw-bold">Username Identification</label>
+                        <input type="text" class="form-control bg-light" value="{{ user.username }}" readonly disabled>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted small fw-bold">Email String Pointer</label>
+                        <input type="text" class="form-control bg-light" value="{{ user.email }}" readonly disabled>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label text-dark fw-semibold">{{ form.student_id.label }}</label>
+                    {{ form.student_id }}
+                    {% if form.student_id.errors %}
+                        <div class="text-danger small mt-1">{{ form.student_id.errors|striptags }}</div>
+                    {% endif %}
+                </div>
+                <button type="submit" class="btn btn-dark rounded-pill w-100 py-2">Update Account Profile Info</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,19 +1,26 @@
-{% extends "base/base.html" %}
+{% extends 'base/base.html' %}
 {% block content %}
-    
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Edit Book</title>
-</head>
-<body>
-    <h1>Edit Book</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Update</button>
-    </form>%
-    <a href="{% url 'book-list' %}">Back to Book List</a>
-</body>
-</html>
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card p-4">
+            <h3 class="mb-4 text-center fw-bold">Modify Book: {{ book.title }}</h3>
+            <form method="POST" class="action-form">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="text-danger small mt-1">{{ field.errors|striptags }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <div class="d-flex gap-2 mt-4">
+                    <a href="{% url 'dashboard' %}" class="btn btn-light rounded-pill border w-50">Cancel Changes</a>
+                    <button type="submit" class="btn btn-primary rounded-pill w-50">Commit Updates</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

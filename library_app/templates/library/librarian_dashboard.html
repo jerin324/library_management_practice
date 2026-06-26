@@ -1,0 +1,75 @@
+{% extends 'base/base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold m-0">System Inventory Hub</h2>
+    <a href="{% url 'add_book' %}" class="btn btn-primary rounded-pill px-4">+ Add Book Asset</a>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 mb-4">
+        <div class="card p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold text-muted m-0">Asset Register</h5>
+                <input type="text" id="catalogSearch" class="form-control form-control-sm w-50 rounded-pill" placeholder="Live filter catalogue entries...">
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle m-0" id="inventoryTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Book Meta Title</th>
+                            <th>ISBN Reference</th>
+                            <th>Available Allocation</th>
+                            <th class="text-end">Asset Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for book in books %}
+                        <tr>
+                            <td><strong class="text-dark">{{ book.title }}</strong></td>
+                            <td><code class="text-secondary">{{ book.isbn }}</code></td>
+                            <td>
+                                {% if book.total_copies > 0 %}
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3">{{ book.total_copies }} units</span>
+                                {% else %}
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3">Stock Empty</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                <a href="{% url 'edit_book' book.id %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3 me-1">Edit</a>
+                                <a href="{% url 'delete_book' book.id %}" class="btn btn-sm btn-danger rounded-pill px-3">Delete</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="text-center text-muted py-4">Database ledger contains zero tracked book units.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4 mb-4">
+        <div class="card p-4">
+            <h5 class="fw-bold text-muted mb-3">Global Tracking Audit</h5>
+            <div class="list-group list-group-flush" style="max-height: 400px; overflow-y: auto;">
+                {% for record in records %}
+                <div class="list-group-item px-0 py-3">
+                    <div class="d-flex justify-content-between small">
+                        <strong class="text-primary">@{{ record.user.username }}</strong>
+                        <span class="text-muted">{{ record.borrow_date }}</span>
+                    </div>
+                    <div class="my-1 text-dark small">Loaned: <em>{{ record.book.title }}</em></div>
+                    {% if record.is_returned %}
+                        <span class="badge bg-light text-success border border-success-subtle rounded-pill">Returned ({{ record.return_date }})</span>
+                    {% else %}
+                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill">Active Loan Outward</span>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <p class="text-center text-muted m-0 py-4">No borrow records recorded in log architecture.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

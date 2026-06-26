@@ -1,0 +1,78 @@
+{% extends 'base/base.html' %}
+{% block content %}
+<div class="row">
+    <div class="col-md-7 mb-4">
+        <div class="card p-4">
+            <h4 class="fw-bold mb-3">Explore Library Catalogue</h4>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle m-0">
+                    <thead>
+                        <tr>
+                            <th>Book Information</th>
+                            <th>Availability Status</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for book in books %}
+                        <tr>
+                            <td>
+                                <div class="fw-bold text-dark">{{ book.title }}</div>
+                                <small class="text-muted">ISBN: {{ book.isbn }}</small>
+                            </td>
+                            <td>
+                                {% if book.total_copies > 0 %}
+                                    <span class="badge bg-success-subtle text-success rounded-pill px-3">{{ book.total_copies }} Available</span>
+                                {% else %}
+                                    <span class="badge bg-danger-subtle text-danger rounded-pill px-3">Out of Stock</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                {% if book.total_copies > 0 %}
+                                    <form action="{% url 'borrow_book' book.id %}" method="POST" class="m-0 action-form">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-dark rounded-pill px-3">Borrow</button>
+                                    </form>
+                                {% else %}
+                                    <button class="btn btn-sm btn-light border rounded-pill px-3" disabled>Unavailable</button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3" class="text-center text-muted">No items are cataloged in system inventory records.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-5 mb-4">
+        <div class="card p-4">
+            <h4 class="fw-bold mb-3 text-secondary">My Active Loans & History</h4>
+            <div class="list-group list-group-flush">
+                {% for record in my_records %}
+                <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0 fw-bold text-dark">{{ record.book.title }}</h6>
+                        <small class="text-muted">Issued: {{ record.borrow_date }}</small>
+                    </div>
+                    <div>
+                        {% if not record.is_returned %}
+                            <form action="{% url 'return_book' record.id %}" method="POST" class="m-0 action-form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">Return</button>
+                            </form>
+                        {% else %}
+                            <span class="badge bg-light text-success border rounded-pill px-3 py-2">Settled ✓</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center text-muted py-4">Your current borrowing profile log history tracking is empty.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
